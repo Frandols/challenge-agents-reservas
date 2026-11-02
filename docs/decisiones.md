@@ -58,3 +58,25 @@
 - Revisar solo al final: no deja decisiones sobre cada entrega.
 
 **Consecuencia:** `git push` sigue requiriendo aprobación.
+
+## D-5: Fijar `better-sqlite3` en 12.11.1
+
+**Fecha:** 2026-11-02. **Decidió:** el agente, por una falla observada.
+
+**Contexto:** con la versión 13.0.3, abrir una base terminó con segmentation fault (exit 139) en Node 22.13.1 sobre darwin-arm64.
+
+**Decisión:** fijar la versión exacta 12.11.1, que abrió una base y respondió `select sqlite_version()` con 3.53.2 en el mismo entorno.
+
+**Alternativa descartada:** `node:sqlite`. Funciona, pero Node lo marca como experimental.
+
+**Consecuencia:** no se usa la última versión mayor. No se investigó la causa de la falla en la 13.
+
+## D-6: Fijar TypeScript en 6.0.x
+
+**Fecha:** 2026-11-02. **Decidió:** el agente, según lo previsto en el plan.
+
+**Contexto:** `typescript-eslint` 8.72.1 pide TypeScript `>=4.8.4 <6.1.0`, y la última versión es la 7.0.2.
+
+**Decisión:** usar TypeScript 6.0.x.
+
+**Alternativa descartada:** quedarse en la 7 sin lint con tipos TypeScript, porque el control de dependencias entre features depende de ESLint.
