@@ -21,3 +21,23 @@
 **Decisión humana:** aceptar. El agente señaló como punto de revisión que `availability` importa helpers de `services/reservations`. El autor lo aceptó con este motivo:
 
 > Estoy dispuesto a aceptar acoples entre servicios al utilizar la organizacion en capas tecnicas pues, ya estoy asumiendo una relacion al agruparlas de esa manera, acepto este episodio.
+
+## Episodio 2: persistencia
+
+**Objetivo y requisito:** conservar reservas y estados tras detener y reiniciar la aplicación (RF-6, CA-14).
+
+**Contexto suministrado:** `docs/especificacion.md`, `CLAUDE.md` y el plan acordado, que pedía una prueba automática y un procedimiento manual.
+
+**Extracto de instrucción** (plan aprobado):
+
+> Persistencia manual: levantar la API real, crear y cancelar con `curl`, detener, reiniciar y consultar. Se registran resultados esperados y observados en `docs/verificacion.md`.
+
+**Acción del agente**
+1. Descartó una prueba que solo reabriera el archivo, porque habría pasado sin demostrar nada: la app seguía usando `:memory:`.
+2. Escribió una prueba que levanta el proceso real y lo reinicia, y observó el rojo ([`95639cd`](https://github.com/Frandols/challenge-agents-reservas/commit/95639cd)).
+3. Conectó SQLite en archivo, el apagado ordenado y `pnpm db:reset` ([`74a4857`](https://github.com/Frandols/challenge-agents-reservas/commit/74a4857)).
+4. Ejecutó el procedimiento manual con `curl`.
+
+**Resultado verificable:** [`docs/verificacion.md`](verificacion.md#persistencia).
+
+**Decisión humana:** pendiente de revisión.

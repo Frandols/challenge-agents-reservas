@@ -11,4 +11,6 @@
 
 - El autor aceptó el Episodio 1 (ver D-7).
 
-**Siguiente:** Episodio 2, persistencia.
+- Episodio 2: se conectó SQLite en archivo y se comprobó el reinicio de forma automática y manual. 39 pruebas aprobadas.
+
+**Siguiente:** revisión humana del Episodio 2.
