@@ -1,3 +1,5 @@
+import { mkdirSync } from "node:fs";
+import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import Database, { type RunResult } from "better-sqlite3";
 import { drizzle } from "drizzle-orm/better-sqlite3";
@@ -9,7 +11,15 @@ import { seedUnits } from "./seed";
 
 const migrationsFolder = fileURLToPath(new URL("../../drizzle", import.meta.url));
 
+const defaultDatabasePath = fileURLToPath(new URL("../../data/reservas.db", import.meta.url));
+
+export function databasePath() {
+  return process.env.DATABASE_PATH ?? defaultDatabasePath;
+}
+
 export function openDatabase(path: string) {
+  if (path !== ":memory:") mkdirSync(dirname(path), { recursive: true });
+
   const sqlite = new Database(path);
   sqlite.pragma("foreign_keys = ON");
 

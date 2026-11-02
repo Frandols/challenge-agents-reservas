@@ -60,6 +60,40 @@ async function listReservations(url: string) {
   return body.reservations;
 }
 
+function runReset(...args: string[]) {
+  const child = spawn(process.execPath, ["--import", "tsx", "src/db/reset.ts", ...args], {
+    env: { ...process.env, DATABASE_PATH: join(directory, "reservas.db") },
+    stdio: "ignore",
+  });
+
+  return new Promise<number | null>((resolve) => child.once("exit", resolve));
+}
+
+describe("reinicio de datos", () => {
+  it("sin confirmación no borra; con --yes borra reservas y conserva el inventario", async () => {
+    const first = await start();
+    await reserve(first.url, "2099-01-10T10:00", "2099-01-10T11:00");
+    await stop(first.child, "SIGTERM");
+
+    expect(await runReset()).toBe(1);
+
+    const second = await start();
+    expect(await listReservations(second.url)).toHaveLength(1);
+    await stop(second.child, "SIGTERM");
+
+    expect(await runReset("--yes")).toBe(0);
+
+    const third = await start();
+    expect(await listReservations(third.url)).toEqual([]);
+
+    const units = await (await fetch(`${third.url}/units`)).json();
+    expect(units.units).toHaveLength(5);
+
+    const created = await reserve(third.url, "2099-01-10T10:00", "2099-01-10T11:00");
+    expect(created.id).toBe("RES-0001");
+  }, 30_000);
+});
+
 describe.each([
   ["detención ordenada", "SIGTERM"],
   ["corte abrupto", "SIGKILL"],

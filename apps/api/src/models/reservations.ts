@@ -1,4 +1,4 @@
-import { and, eq, gt, lt, type SQL } from "drizzle-orm";
+import { and, eq, gt, lt, sql, type SQL } from "drizzle-orm";
 import type { Db } from "../db/client";
 import { reservations } from "../db/schema";
 
@@ -58,4 +58,14 @@ export function listReservations(
     .where(and(...conditions))
     .orderBy(reservations.startsAt, reservations.id)
     .all();
+}
+
+// Borra todas las reservas y reinicia la numeración. Solo lo usa `pnpm db:reset`.
+export function deleteAllReservations(db: Db) {
+  return db.transaction((tx) => {
+    const { changes } = tx.delete(reservations).run();
+    tx.run(sql`delete from sqlite_sequence where name = 'reservations'`);
+
+    return changes;
+  });
 }
