@@ -19,4 +19,6 @@
 
 - El autor aceptó el Episodio 3.
 
-**Siguiente:** README y verificación desde un clon limpio.
+- Se escribió el README y se verificó la entrega desde un clon limpio. El primer intento fue inválido y se repitió (ver `verificacion.md`).
+
+**Estado:** listo para entregar.

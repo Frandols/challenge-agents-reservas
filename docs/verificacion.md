@@ -102,3 +102,17 @@ Lo ejecutó el agente con Playwright sobre Chromium headless, con `pnpm dev` y u
 **No ejecutado:** el recorrido en un navegador con interfaz gráfica y en otros navegadores, y lectores de pantalla.
 
 Captura de referencia: [`capturas/tablero.png`](capturas/tablero.png).
+
+## Clon limpio
+
+Fecha: 2026-11-02. Commit [`166d21d`](https://github.com/Frandols/challenge-agents-reservas/commit/166d21d), clonado desde GitHub en un directorio temporal, sin variables de entorno ni cuentas. Los commits posteriores solo agregan documentación.
+
+| Comando | Resultado observado |
+|---|---|
+| `pnpm install --frozen-lockfile` | Completado |
+| `pnpm test` | API: 39 aprobadas de 39. Web: 10 aprobadas de 10 |
+| `pnpm typecheck`, `pnpm lint`, `pnpm build` | Sin errores |
+| `pnpm dev` | Puertos 3001 y 5173 servidos desde el clon. 5 unidades, web 200 y `RES-0001` creada |
+| Archivos tras usar la app | `reservas.db` creada en `apps/api/data/`, y `git status` sin cambios |
+
+**Primer intento inválido:** el agente lanzó `pnpm dev` sin comprobar los puertos, que ya usaba un servidor de la carpeta original. Las respuestas parecían correctas, pero las daba ese otro servidor, y el del clon terminó a los 97 ms. Lo delató la ausencia de `reservas.db` en el clon. La reserva de prueba cayó en la base del proyecto, que no tenía otras reservas, y se borró. La verificación se repitió comprobando antes que los puertos estuvieran libres y a qué directorio pertenecía cada proceso.
