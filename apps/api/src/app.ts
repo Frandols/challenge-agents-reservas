@@ -1,12 +1,14 @@
 import express from "express";
+import type { Deps } from "./deps";
+import { errorHandler } from "./middlewares/error-handler";
+import { createRouter } from "./routes";
 
-export function createApp() {
+export function createApp(deps: Deps) {
   const app = express();
-  app.use(express.json());
 
-  app.get("/api/health", (_req, res) => {
-    res.json({ status: "ok" });
-  });
+  app.use(express.json());
+  app.use("/api", createRouter(deps));
+  app.use(errorHandler);
 
   return app;
 }

@@ -4,9 +4,6 @@
 
 - Se leyó la consigna y se acordó el plan con el autor.
 - Se inicializó Git y se escribieron la especificación v1, las instrucciones del agente, los permisos y el registro de decisiones.
-
-
-
 - Se creó el monorepo con Turborepo y pnpm. Pruebas, typecheck, lint y build pasan en el esqueleto.
 - `better-sqlite3` 13.0.3 falló con segmentation fault y se fijó la 12.11.1 (ver D-5). TypeScript se fijó en 6.0.x (ver D-6).
 
