@@ -40,4 +40,8 @@
 
 **Resultado verificable:** [`docs/verificacion.md`](verificacion.md#persistencia).
 
-**Decisión humana:** pendiente de revisión.
+**Decisión humana:** corregir. El autor preguntó si la prueba podía simular el reinicio con mocks o con inversión de dependencias, sin lanzar procesos. El agente desaconsejó los mocks, porque no demuestran que los datos queden en disco, y propuso extraer `startServer`. El autor eligió esa opción:
+
+> Perfecto, para la parte automatica utilicemos la inversion de dependencias que propones, y dejemos la detencion y relanzamiento del proceso para la parte manual
+
+**Corrección aplicada:** [`69ad970`](https://github.com/Frandols/challenge-agents-reservas/commit/69ad970). La prueba reinicia la app y SQLite en un archivo temporal dentro del mismo proceso. Las señales pasan al procedimiento manual, ahora con SIGKILL. Ver D-8.

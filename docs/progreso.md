@@ -13,4 +13,6 @@
 
 - Episodio 2: se conectó SQLite en archivo y se comprobó el reinicio de forma automática y manual. 39 pruebas aprobadas.
 
-**Siguiente:** revisión humana del Episodio 2.
+- El autor corrigió el Episodio 2 (ver D-8). La prueba automática ya no lanza procesos y el procedimiento manual suma SIGKILL.
+
+**Siguiente:** Episodio 3, interfaz.

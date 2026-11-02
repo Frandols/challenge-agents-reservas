@@ -92,3 +92,19 @@
 **Alternativa descartada:** extraer esos helpers a un módulo común.
 
 **Consecuencia:** un cambio en `services/reservations` puede afectar a `availability`. Las pruebas de coherencia cubren esa relación.
+
+## D-8: Probar la persistencia en proceso
+
+**Fecha:** 2026-11-02. **Decidió:** el autor, en la revisión del Episodio 2.
+
+**Contexto:** la prueba original lanzaba el proceso real, por lo que era más lenta y dependía de `tsx`.
+
+**Decisión:** extraer `startServer` e invertir sus dependencias (`databasePath`, `port`, `now`). La prueba automática reinicia app y base en el mismo proceso, y la detención del proceso real queda en el procedimiento manual.
+
+**Alternativas descartadas**
+- Mocks o un fake de la base: pasarían aunque SQLite no guardara nada.
+- Mantener la prueba con procesos: cubre señales, pero con más costo.
+
+**Consecuencias**
+- La suite completa de la API tarda menos de un segundo.
+- SIGTERM, SIGKILL, la lectura de `DATABASE_PATH` y la confirmación `--yes` de `db:reset` solo se comprueban con el procedimiento manual.
