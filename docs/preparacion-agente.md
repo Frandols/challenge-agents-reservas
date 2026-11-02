@@ -48,7 +48,7 @@
 
 `CLAUDE.md` exige que, antes de crear o modificar la lógica de superposición, exista una prueba de turnos consecutivos que falle por el motivo esperado, en un commit anterior al de la implementación.
 
-Es comprobable en el historial de Git: el commit de la prueba debe preceder al de la implementación. El enlace a esa evidencia se agrega cuando exista.
+Es comprobable en el historial de Git: el commit de la prueba debe preceder al de la implementación. La evidencia de uso está en el [Episodio 1](episodios.md#episodio-1-reglas-de-dominio).
 
 ## Retención del progreso
 

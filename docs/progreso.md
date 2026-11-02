@@ -7,4 +7,6 @@
 - Se creó el monorepo con Turborepo y pnpm. Pruebas, typecheck, lint y build pasan en el esqueleto.
 - `better-sqlite3` 13.0.3 falló con segmentation fault y se fijó la 12.11.1 (ver D-5). TypeScript se fijó en 6.0.x (ver D-6).
 
-**Siguiente:** Episodio 1, reglas de dominio.
+- Episodio 1: se implementaron las reglas de dominio con prueba previa. 36 pruebas aprobadas sobre base en memoria.
+
+**Siguiente:** revisión humana del Episodio 1.
