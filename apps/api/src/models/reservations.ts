@@ -5,8 +5,22 @@ import { reservations } from "../db/schema";
 export type ReservationRow = typeof reservations.$inferSelect;
 export type NewReservationRow = typeof reservations.$inferInsert;
 
-export function findActiveOverlapping(_db: Db, _unitId: string, _start: string, _end: string): ReservationRow[] {
-  throw new Error("findActiveOverlapping sin implementar");
+// Regla única de superposición: disponibilidad y creación la usan por igual.
+// Las desigualdades son estrictas para que los turnos consecutivos no choquen.
+export function findActiveOverlapping(db: Db, unitId: string, start: string, end: string): ReservationRow[] {
+  return db
+    .select()
+    .from(reservations)
+    .where(
+      and(
+        eq(reservations.unitId, unitId),
+        eq(reservations.status, "active"),
+        lt(reservations.startsAt, end),
+        gt(reservations.endsAt, start),
+      ),
+    )
+    .orderBy(reservations.startsAt)
+    .all();
 }
 
 export function insertReservation(db: Db, values: NewReservationRow) {
