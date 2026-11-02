@@ -1,0 +1,19 @@
+node_modules/
+dist/
+.turbo/
+coverage/
+
+# Datos locales: las reservas nunca se versionan
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Secretos y configuración personal
+.env
+.env.*
+!.env.example
+.claude/settings.local.json
+
+.DS_Store
+*.log
