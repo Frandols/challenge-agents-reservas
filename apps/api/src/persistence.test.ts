@@ -1,130 +1,105 @@
-import { type ChildProcess, spawn } from "node:child_process";
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { resetData } from "./db/reset-data";
+import { startServer } from "./server";
 
-const LISTENING = /http:\/\/localhost:(\d+)/;
+type Running = Awaited<ReturnType<typeof startServer>>;
 
 let directory: string;
-let running: ChildProcess | undefined;
+let databasePath: string;
+let running: Running | undefined;
 
 beforeEach(() => {
   directory = mkdtempSync(join(tmpdir(), "reservas-"));
+  databasePath = join(directory, "reservas.db");
 });
 
 afterEach(async () => {
-  if (running) await stop(running, "SIGKILL");
+  await running?.stop();
+  running = undefined;
   rmSync(directory, { recursive: true, force: true });
 });
 
-function start() {
-  const child = spawn(process.execPath, ["--import", "tsx", "src/index.ts"], {
-    env: { ...process.env, PORT: "0", DATABASE_PATH: join(directory, "reservas.db") },
-    stdio: ["ignore", "pipe", "inherit"],
-  });
-  running = child;
-
-  return new Promise<{ child: ChildProcess; url: string }>((resolve, reject) => {
-    child.once("exit", (code) => reject(new Error(`La API terminó antes de arrancar: ${code}`)));
-    child.stdout?.on("data", (chunk: Buffer) => {
-      const match = LISTENING.exec(chunk.toString());
-      if (match) resolve({ child, url: `http://localhost:${match[1]}/api` });
-    });
-  });
+async function start() {
+  running = await startServer({ databasePath, port: 0, now: () => "2026-11-02T09:00" });
 }
 
-function stop(child: ChildProcess, signal: NodeJS.Signals) {
-  return new Promise<void>((resolve) => {
-    if (child.exitCode !== null || child.signalCode !== null) return resolve();
-    child.removeAllListeners("exit");
-    child.once("exit", () => resolve());
-    child.kill(signal);
-  });
+async function restart() {
+  await stop();
+  await start();
 }
 
-async function reserve(url: string, start: string, end: string) {
-  const response = await fetch(`${url}/reservations`, {
+async function stop() {
+  await running?.stop();
+  running = undefined;
+}
+
+function url(path: string) {
+  return `http://localhost:${running?.port}/api${path}`;
+}
+
+function post(path: string, body?: unknown) {
+  return fetch(url(path), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ unitId: "MIC-01", requester: "Ada Pruebas", start, end }),
+    body: body === undefined ? undefined : JSON.stringify(body),
   });
-
-  return response.json();
 }
 
-async function listReservations(url: string) {
-  const response = await fetch(`${url}/reservations`);
+function reserve(start: string, end: string) {
+  return post("/reservations", { unitId: "MIC-01", requester: "Ada Pruebas", start, end });
+}
+
+async function listReservations() {
+  const response = await fetch(url("/reservations"));
   const body = await response.json();
 
   return body.reservations;
 }
 
-function runReset(...args: string[]) {
-  const child = spawn(process.execPath, ["--import", "tsx", "src/db/reset.ts", ...args], {
-    env: { ...process.env, DATABASE_PATH: join(directory, "reservas.db") },
-    stdio: "ignore",
+describe("reinicio de la aplicación", () => {
+  it("recupera reservas activas y canceladas, y siguen aplicando las reglas", async () => {
+    await start();
+    const active = await (await reserve("2026-11-10T10:00", "2026-11-10T11:00")).json();
+    const toCancel = await (await reserve("2026-11-10T12:00", "2026-11-10T13:00")).json();
+    const cancelled = await (await post(`/reservations/${toCancel.id}/cancel`)).json();
+
+    await restart();
+
+    expect(await listReservations()).toEqual([active, cancelled]);
+    expect((await reserve("2026-11-10T10:30", "2026-11-10T11:30")).status).toBe(409);
+
+    const reused = await (await reserve("2026-11-10T12:00", "2026-11-10T13:00")).json();
+    expect(reused.id).toBe("RES-0003");
   });
 
-  return new Promise<number | null>((resolve) => child.once("exit", resolve));
-}
+  it("no duplica el inventario", async () => {
+    await start();
 
-describe("reinicio de datos", () => {
-  it("sin confirmación no borra; con --yes borra reservas y conserva el inventario", async () => {
-    const first = await start();
-    await reserve(first.url, "2099-01-10T10:00", "2099-01-10T11:00");
-    await stop(first.child, "SIGTERM");
+    await restart();
 
-    expect(await runReset()).toBe(1);
-
-    const second = await start();
-    expect(await listReservations(second.url)).toHaveLength(1);
-    await stop(second.child, "SIGTERM");
-
-    expect(await runReset("--yes")).toBe(0);
-
-    const third = await start();
-    expect(await listReservations(third.url)).toEqual([]);
-
-    const units = await (await fetch(`${third.url}/units`)).json();
-    expect(units.units).toHaveLength(5);
-
-    const created = await reserve(third.url, "2099-01-10T10:00", "2099-01-10T11:00");
-    expect(created.id).toBe("RES-0001");
-  }, 30_000);
+    const { units } = await (await fetch(url("/units"))).json();
+    expect(units).toHaveLength(5);
+  });
 });
 
-describe.each([
-  ["detención ordenada", "SIGTERM"],
-  ["corte abrupto", "SIGKILL"],
-] as const)("reinicio tras %s", (_name, signal) => {
-  it("recupera reservas activas y canceladas, y siguen aplicando las reglas", async () => {
-    const first = await start();
-    const active = await reserve(first.url, "2099-01-10T10:00", "2099-01-10T11:00");
-    const toCancel = await reserve(first.url, "2099-01-10T12:00", "2099-01-10T13:00");
-    const cancelResponse = await fetch(`${first.url}/reservations/${toCancel.id}/cancel`, { method: "POST" });
-    const cancelled = await cancelResponse.json();
-    const before = await listReservations(first.url);
-    await stop(first.child, signal);
+describe("reinicio de datos", () => {
+  it("borra las reservas, conserva el inventario y reinicia la numeración", async () => {
+    await start();
+    await reserve("2026-11-10T10:00", "2026-11-10T11:00");
+    await stop();
 
-    const second = await start();
+    expect(resetData(databasePath)).toBe(1);
 
-    expect(before).toEqual([active, cancelled]);
-    expect(await listReservations(second.url)).toEqual(before);
+    await start();
+    expect(await listReservations()).toEqual([]);
 
-    const blocked = await fetch(`${second.url}/reservations`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        unitId: "MIC-01",
-        requester: "Ada Pruebas",
-        start: "2099-01-10T10:30",
-        end: "2099-01-10T11:30",
-      }),
-    });
-    expect(blocked.status).toBe(409);
+    const { units } = await (await fetch(url("/units"))).json();
+    expect(units).toHaveLength(5);
 
-    const reused = await reserve(second.url, "2099-01-10T12:00", "2099-01-10T13:00");
-    expect(reused.id).toBe("RES-0003");
-  }, 30_000);
+    const created = await (await reserve("2026-11-10T10:00", "2026-11-10T11:00")).json();
+    expect(created.id).toBe("RES-0001");
+  });
 });

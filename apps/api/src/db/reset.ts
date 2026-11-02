@@ -1,5 +1,5 @@
-import { deleteAllReservations } from "../models/reservations";
-import { databasePath, openDatabase } from "./client";
+import { databasePath } from "./client";
+import { resetData } from "./reset-data";
 
 const path = databasePath();
 
@@ -9,8 +9,4 @@ if (!process.argv.includes("--yes")) {
   process.exit(1);
 }
 
-const { db, close } = openDatabase(path);
-const deleted = deleteAllReservations(db);
-close();
-
-console.log(`Se borraron ${deleted} reservas de ${path}. El inventario se conserva.`);
+console.log(`Se borraron ${resetData(path)} reservas de ${path}. El inventario se conserva.`);
