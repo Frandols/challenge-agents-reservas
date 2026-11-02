@@ -9,4 +9,6 @@
 
 - Episodio 1: se implementaron las reglas de dominio con prueba previa. 36 pruebas aprobadas sobre base en memoria.
 
-**Siguiente:** revisión humana del Episodio 1.
+- El autor aceptó el Episodio 1 (ver D-7).
+
+**Siguiente:** Episodio 2, persistencia.

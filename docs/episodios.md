@@ -18,4 +18,6 @@
 
 **Resultado verificable:** [`docs/verificacion.md`](verificacion.md).
 
-**Decisión humana:** pendiente de revisión.
+**Decisión humana:** aceptar. El agente señaló como punto de revisión que `availability` importa helpers de `services/reservations`. El autor lo aceptó con este motivo:
+
+> Estoy dispuesto a aceptar acoples entre servicios al utilizar la organizacion en capas tecnicas pues, ya estoy asumiendo una relacion al agruparlas de esa manera, acepto este episodio.

@@ -80,3 +80,15 @@
 **Decisión:** usar TypeScript 6.0.x.
 
 **Alternativa descartada:** quedarse en la 7 sin lint con tipos TypeScript, porque el control de dependencias entre features depende de ESLint.
+
+## D-7: Aceptar acoples entre servicios
+
+**Fecha:** 2026-11-02. **Decidió:** el autor, en la revisión del Episodio 1.
+
+**Contexto:** `services/availability` reutiliza `assertUnitExists` y `serializeReservation` de `services/reservations`.
+
+**Decisión:** mantener ese acople. Organizar por capas técnicas ya asume una relación entre los servicios de una misma capa.
+
+**Alternativa descartada:** extraer esos helpers a un módulo común.
+
+**Consecuencia:** un cambio en `services/reservations` puede afectar a `availability`. Las pruebas de coherencia cubren esa relación.
