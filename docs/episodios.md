@@ -64,4 +64,6 @@
 
 **Resultado verificable:** [`docs/verificacion.md`](verificacion.md#interfaz).
 
-**Decisión humana:** pendiente de revisión.
+**Decisión humana:** aceptar, sin correcciones. El agente le pidió al autor que probara la aplicación antes de decidir y le señaló las limitaciones conocidas, que quedan como pendientes en el README:
+
+> La verdad me encanta, acepto.

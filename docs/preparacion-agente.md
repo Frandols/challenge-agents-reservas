@@ -42,7 +42,20 @@
 | Leer `.env` | Denegado |
 | `git push --force`, `git reset --hard` | Denegados |
 
-**Controles humanos previstos:** pausa al terminar cada episodio (dominio, persistencia e interfaz) para aceptar, corregir o rechazar. Las decisiones reales quedan en [`episodios.md`](episodios.md).
+`.claude/settings.json` se creó durante la primera sesión. No se comprobó si Claude Code aplicó estas reglas en esa misma sesión ni si cada `git push` pasó por una confirmación explícita, así que la tabla describe lo configurado, no lo observado.
+
+**Controles humanos aplicados**
+- El autor aprobó el plan antes de que el agente modificara el proyecto.
+- El autor cambió el stack durante la planificación (D-1).
+- Hubo una pausa de revisión al terminar cada episodio: uno se aceptó, uno se corrigió y uno se aceptó después de probar la aplicación. Ver [`episodios.md`](episodios.md).
+
+**Qué se revisó antes de aceptar:** diffs y salidas de pruebas en el caso del agente; las decisiones señaladas en cada pausa y la aplicación funcionando en el caso del autor.
+
+**Herramientas usadas además de archivos y terminal**
+- MCP de GitHub, para crear el repositorio.
+- MCP de Neon, solo para leer organizaciones, proyectos y regiones. No se creó nada (D-1).
+- Playwright en un directorio temporal, para el recorrido en navegador. No forma parte del repositorio.
+- Skill `frontend-design`, para la dirección visual.
 
 ## Adaptación específica
 

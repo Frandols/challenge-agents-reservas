@@ -17,4 +17,6 @@
 
 - Episodio 3: se construyó la interfaz y se recorrió en navegador. 39 pruebas de API y 10 de web aprobadas.
 
-**Siguiente:** revisión humana del Episodio 3.
+- El autor aceptó el Episodio 3.
+
+**Siguiente:** README y verificación desde un clon limpio.
