@@ -15,4 +15,6 @@
 
 - El autor corrigió el Episodio 2 (ver D-8). La prueba automática ya no lanza procesos y el procedimiento manual suma SIGKILL.
 
-**Siguiente:** Episodio 3, interfaz.
+- Episodio 3: se construyó la interfaz y se recorrió en navegador. 39 pruebas de API y 10 de web aprobadas.
+
+**Siguiente:** revisión humana del Episodio 3.

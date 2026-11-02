@@ -108,3 +108,15 @@
 **Consecuencias**
 - La suite completa de la API tarda menos de un segundo.
 - SIGTERM, SIGKILL, la lectura de `DATABASE_PATH` y la confirmación `--yes` de `db:reset` solo se comprueban con el procedimiento manual.
+
+## D-9: El tablero no calcula conflictos
+
+**Fecha:** 2026-11-02. **Decidió:** el agente.
+
+**Contexto:** la vista previa del tablero debe ponerse en rojo cuando el horario está ocupado.
+
+**Decisión:** `reservation-booking` consulta disponibilidad a la API y `App.tsx` le pasa el resultado al tablero. Mientras se arrastra, la vista previa se ve neutra.
+
+**Alternativa descartada:** comparar en el navegador las barras visibles. Habría sido una segunda copia de la regla de superposición, que `CLAUDE.md` prohíbe.
+
+**Consecuencia:** el conflicto aparece unos instantes después de soltar, no durante el arrastre.

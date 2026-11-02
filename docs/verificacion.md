@@ -59,3 +59,46 @@ Ejecutado en el commit [`69ad970`](https://github.com/Frandols/challenge-agents-
 | `pnpm db:reset --yes` | Borra las reservas | "Se borraron 2 reservas" |
 
 **No ejecutado:** concurrencia real entre procesos, que está fuera de alcance. Tampoco se probó `pnpm db:reset` con la API en ejecución.
+
+## Interfaz
+
+Fecha: 2026-11-02. Commit [`7a8b33e`](https://github.com/Frandols/challenge-agents-reservas/commit/7a8b33e).
+
+### Pruebas y controles
+
+| Comando | Resultado observado |
+|---|---|
+| `pnpm test` | API: 39 aprobadas de 39. Web: 10 aprobadas de 10 |
+| `pnpm typecheck`, `pnpm lint`, `pnpm build` | Sin errores |
+
+**Límite entre features:** se agregó a propósito un import de una feature a otra y otro de `shared` a una feature. `eslint` rechazó ambos con `no-restricted-imports`. Los dos cambios se revirtieron.
+
+### Recorrido en navegador
+
+Lo ejecutó el agente con Playwright sobre Chromium headless, con `pnpm dev` y una base temporal por `DATABASE_PATH`. El script quedó fuera del repositorio, así que para repetirlo se siguen estos pasos a mano.
+
+| Acción | Esperado | Observado |
+|---|---|---|
+| Arrastrar en `MIC-01` de 10:00 a 11:00 | Formulario precargado, libre | Coincide |
+| Reservar como Ada Pruebas | Confirma `RES-0001` | Coincide |
+| Arrastrar de 10:30 a 11:30 | Ocupada, botón deshabilitado | Coincide |
+| Arrastrar de 11:00 a 12:00 | Libre, y se puede reservar | Coincide, `RES-0002` |
+| Arrastrar en `MIC-02` de 10:00 a 11:00 | Libre, y se puede reservar | Coincide, `RES-0003` |
+| Cancelar `RES-0001` | Queda en el historial como cancelada | Coincide |
+| Arrastrar de nuevo en `MIC-01` de 10:00 a 11:00 | Libre | Coincide |
+| Solicitante de solo espacios | Error en el campo | "Indicá quién solicita la reserva." |
+| Reservar con inicio pasado | Error de la API, sin "libre" | "El inicio ya pasó. Elegí un horario futuro." |
+| Reservar sin arrastrar, con el formulario y Enter | Crea la reserva y muestra su día | Coincide |
+| Ancho de 390 px | Sin desborde horizontal | 0 px de desborde |
+| API inaccesible | Mensaje que explica qué hacer | Coincide, repetido en los tres paneles |
+
+**Defectos encontrados por el recorrido y corregidos antes del commit**
+- El tablero estiraba toda la página en vez de hacer scroll dentro de su marco.
+- El mensaje de confirmación quedaba visible al elegir otro horario desde el tablero.
+- Enviar un horario ocupado mostraba dos errores.
+- Con inicio pasado, se veían a la vez "está libre" y el error.
+- Turborepo filtraba `DATABASE_PATH`, y el recorrido escribió en la base por defecto. Se corrigió `turbo.json` y se borraron esos datos de prueba con `pnpm db:reset --yes`.
+
+**No ejecutado:** el recorrido en un navegador con interfaz gráfica y en otros navegadores, y lectores de pantalla.
+
+Captura de referencia: [`capturas/tablero.png`](capturas/tablero.png).
