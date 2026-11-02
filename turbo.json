@@ -1,5 +1,9 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
+  "globalPassThroughEnv": [
+    "DATABASE_PATH",
+    "PORT"
+  ],
   "tasks": {
     "build": {
       "dependsOn": [

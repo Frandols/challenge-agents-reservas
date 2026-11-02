@@ -1,0 +1,209 @@
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--space-4) var(--space-8);
+  margin-bottom: var(--space-6);
+}
+
+.day {
+  font-size: var(--text-display);
+  font-stretch: 125%;
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.day::first-letter {
+  text-transform: uppercase;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.nav button,
+.nav input {
+  min-height: 2.5rem;
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--ink);
+  background: transparent;
+  cursor: pointer;
+}
+
+.nav button:hover:not(:disabled) {
+  background: var(--surface);
+}
+
+.nav button:disabled {
+  border-color: var(--grid);
+  color: var(--ink-soft);
+  cursor: default;
+}
+
+.hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.hint {
+  margin-bottom: var(--space-2);
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
+
+.error {
+  padding: var(--space-3) var(--space-4);
+  border-left: 4px solid var(--conflict);
+  background: var(--surface);
+  color: var(--conflict);
+}
+
+.scroller {
+  overflow-x: auto;
+  border: 1px solid var(--ink);
+  background: var(--surface);
+}
+
+.board {
+  display: grid;
+  grid-template-columns: 136px 1fr;
+}
+
+.corner,
+.plate {
+  position: sticky;
+  left: 0;
+  z-index: 3;
+  background: var(--surface);
+  border-right: 1px solid var(--ink);
+}
+
+.corner {
+  border-bottom: 1px solid var(--ink);
+}
+
+.hours {
+  display: grid;
+  grid-template-columns: repeat(24, 1fr);
+  border-bottom: 1px solid var(--ink);
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.hours span {
+  padding: var(--space-1) var(--space-2);
+}
+
+.plate {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--grid);
+}
+
+.unitId {
+  font-stretch: 125%;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.unitName {
+  color: var(--ink-soft);
+  font-size: 0.75rem;
+  line-height: 1.2;
+}
+
+/* Papel milimetrado: cuartos de hora y horas sobre la misma fila. */
+.track {
+  position: relative;
+  height: 76px;
+  border-bottom: 1px solid var(--grid);
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(to right, var(--grid) 1px, transparent 1px),
+    linear-gradient(to right, var(--grid-faint) 1px, transparent 1px);
+  background-size:
+    calc(100% / 24) 100%,
+    calc(100% / 96) 100%;
+  cursor: crosshair;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.active,
+.preview {
+  position: absolute;
+  top: 8px;
+  height: 42px;
+}
+
+.active {
+  z-index: 1;
+  overflow: hidden;
+  padding: var(--space-2);
+  background: var(--reserved);
+  color: var(--reserved-ink);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: 26px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Una cancelada queda en su propio carril: se ve, pero no ocupa el horario. */
+.cancelled {
+  position: absolute;
+  bottom: 6px;
+  height: 12px;
+  border: 1px solid var(--ink-soft);
+  background: repeating-linear-gradient(
+    135deg,
+    var(--ink-soft) 0 1px,
+    transparent 1px 5px
+  );
+}
+
+.preview {
+  z-index: 2;
+  border: 2px dashed var(--reserved);
+  background: color-mix(in srgb, var(--reserved) 14%, transparent);
+  pointer-events: none;
+}
+
+.previewConflict {
+  border-color: var(--conflict);
+  background: color-mix(in srgb, var(--conflict) 16%, transparent);
+}
+
+.now {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 2;
+  width: 2px;
+  background: var(--ink);
+  pointer-events: none;
+}
+
+.list {
+  display: grid;
+  gap: var(--space-3);
+  padding: 0;
+  list-style: none;
+}
+
+.listItem {
+  display: grid;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--ink);
+  background: var(--surface);
+}

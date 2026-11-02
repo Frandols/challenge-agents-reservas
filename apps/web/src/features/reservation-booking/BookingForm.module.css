@@ -1,0 +1,86 @@
+.panel {
+  padding: var(--space-6);
+  border: 1px solid var(--ink);
+  background: var(--surface);
+}
+
+.title {
+  margin-bottom: var(--space-4);
+  font-size: var(--text-lg);
+  font-stretch: 112%;
+  font-weight: 700;
+}
+
+.form {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.times {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: var(--space-4);
+}
+
+.field {
+  display: grid;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--ink-soft);
+  border-radius: 0;
+  background: #ffffff;
+  font-size: var(--text-base);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+
+.field input[aria-invalid="true"] {
+  border-color: var(--conflict);
+}
+
+.fieldError {
+  color: var(--conflict);
+  font-weight: 400;
+}
+
+.status {
+  min-height: 1.5rem;
+  font-size: var(--text-sm);
+}
+
+.free {
+  color: var(--reserved);
+}
+
+.taken {
+  color: var(--conflict);
+}
+
+.submit {
+  justify-self: start;
+  min-height: 2.75rem;
+  padding: var(--space-2) var(--space-6);
+  border: 0;
+  background: var(--reserved);
+  color: var(--reserved-ink);
+  font-stretch: 112%;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.submit:hover:not(:disabled) {
+  background: var(--ink);
+}
+
+.submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
